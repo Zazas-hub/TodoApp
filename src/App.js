@@ -1,23 +1,26 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import { TodoWrapper } from "./components/TodoWrapper";
+import { TodoListWrapper } from "./components/Lists/TodoListWrapper";
+import { useState } from "react";
 
 function App() {
+  const [Listview, updateListView] = useState(true);
+  const handleClick = () => {
+    updateListView(false);
+  };
+  const handleTodoClick = () => {
+    updateListView(true);
+  };
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      {Listview ? <TodoWrapper></TodoWrapper> : <TodoListWrapper />}
+      <button onClick={handleClick} className="todo-list_btn">
+        Add Task List
+      </button>
+      <button onClick={handleTodoClick} className="todo-list_btn">
+        Add Todo
+      </button>
     </div>
   );
 }
