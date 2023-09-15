@@ -1,12 +1,16 @@
 import { useState } from "react";
 
-export const TodoForm = ({ addTodo }) => {
+import React, { useContext, createContext } from "react";
+
+export const TodoForm = ({ addNewTodo }) => {
   const [value, setValue] = useState("");
+
+  // const MyContext = createContext();
+  // const updateData = useContext(MyContext);
 
   function handleSubmit(e) {
     e.preventDefault();
-    addTodo(value);
-
+    addNewTodo(value);
     setValue("");
   }
 

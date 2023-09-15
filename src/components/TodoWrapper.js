@@ -1,71 +1,106 @@
-import { useState } from "react";
+import { useState, createContext, useContext } from "react";
 import { TodoForm } from "./TodoForm";
 import { Todo } from "./Todo";
 import { v4 as uuidv4 } from "uuid";
 import { EditTodoForm } from "./EditTodoForm";
+import {
+  addTodo,
+  deleteTodo,
+  completeTodo,
+  updateTodo,
+  editTasks,
+} from "../redux/todoSlice";
+import { useSelector, useDispatch } from "react-redux";
+
 uuidv4();
+const MyContext = createContext();
 
 export const TodoWrapper = () => {
-  const [todos, setTodos] = useState([]);
+  const [newTodo, setNewTodo] = useState("");
+  const [value, setValue] = useState("some content");
 
-  function addTodo(todo) {
-    setTodos([
-      ...todos,
-      {
+  const todos = useSelector((state) => state.todos);
+  const dispatch = useDispatch();
+  // const [todos, setTodos] = useState([]);
+
+  function addNewTodo(todo) {
+    dispatch(
+      addTodo({
         id: uuidv4(),
         task: todo,
         completed: false,
         isEditing: false,
-      },
-    ]);
+      })
+    );
+    setNewTodo("");
+
     console.log(todos);
   }
 
-  const toggleComplete = (id) => {
-    setTodos(
-      todos.map((todo) =>
-        todo.id === id ? { ...todo, completed: !todo.completed } : todo
-      )
-    );
+  // function addTodo(todo) {
+  //   setTodos([
+  //     ...todos,
+  //     {
+  //       id: uuidv4(),
+  //       task: todo,
+  //       completed: false,
+  //       isEditing: false,
+  //     },
+  //   ]);
+  //   console.log(todos);
+  // }
+
+  // const toggleComplete = (id) => {
+  //   setTodos(
+  //     todos.map((todo) =>
+  //       todo.id === id ? { ...todo, completed: !todo.completed } : todo
+  //     )
+  //   );
+  // };
+
+  const handleCompleteTodo = (id) => {
+    dispatch(completeTodo(id));
   };
 
-  const deleteTodo = (id) => {
-    setTodos(todos.filter((todo) => todo.id !== id));
+  const handleDeleteTodo = (id) => {
+    dispatch(deleteTodo(id));
   };
 
-  const editTodo = (id) => {
-    setTodos(
-      todos.map((todo) =>
-        todo.id === id ? { ...todo, isEditing: !todo.isEditing } : todo
-      )
-    );
+  const handleEditTodo = (id) => {
+    dispatch(updateTodo(id));
   };
 
-  const editTask = (task, id) => {
-    setTodos(
-      todos.map((todo) =>
-        todo.id === id ? { ...todo, task, isEditing: !todo.isEditing } : todo
-      )
-    );
+  const handleEditTasks = (id) => {
+    dispatch(editTasks(id));
   };
+
+  // const editTask = (task, id) => {
+  //   setTodos(
+  //     todos.map((todo) =>
+  //       todo.id === id ? { ...todo, task, isEditing: !todo.isEditing } : todo
+  //     )
+  //   );
+  // };
 
   return (
+    // <MyContext.Provider value={updateData}>
     <div className="TodoWrapper">
       <h1>Get it done </h1>
-      <TodoForm addTodo={addTodo}></TodoForm>
+      <TodoForm addNewTodo={addNewTodo}></TodoForm>
       {todos.map((todo, index) =>
         todo.isEditing ? (
-          <EditTodoForm editTodo={editTask} task={todo} />
+          <EditTodoForm editTodo={handleEditTasks} task={todo} />
         ) : (
           <Todo
             task={todo}
             key={index}
-            toggleComplete={toggleComplete}
-            deleteTodo={deleteTodo}
-            editTodo={editTodo}
+            toggleComplete={handleCompleteTodo}
+            deleteTodo={handleDeleteTodo}
+            editTodo={handleEditTodo}
           />
         )
       )}
     </div>
+    // </MyContext.Provider>
   );
 };
